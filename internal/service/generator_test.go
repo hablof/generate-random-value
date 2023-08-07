@@ -3,102 +3,103 @@ package service
 import (
 	"testing"
 
+	"github.com/hablof/generate-random-value/internal/models"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerator_Generate_ErrorsOnly(t *testing.T) {
 	tests := []struct {
 		name string
-		opts GenerateOptions
+		opts models.GenerateOptions
 		// want    string
 		wantErr error
 	}{
 		{
 			name: "StringLike, no err",
-			opts: GenerateOptions{
-				generationType: stringLike,
+			opts: models.GenerateOptions{
+				GenerationType: models.StringLike,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "Number, no err",
-			opts: GenerateOptions{
-				generationType: num,
+			opts: models.GenerateOptions{
+				GenerationType: models.Num,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "StringLike, with charset, no err",
-			opts: GenerateOptions{
-				generationType:   stringLike,
-				charset:          "test",
-				charsetSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:   models.StringLike,
+				Charset:          "test",
+				CharsetSpecified: true,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "Number, with charset, no err",
-			opts: GenerateOptions{
-				generationType:   num,
-				charset:          "test",
-				charsetSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:   models.Num,
+				Charset:          "test",
+				CharsetSpecified: true,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "guid",
-			opts: GenerateOptions{
-				generationType: guid,
+			opts: models.GenerateOptions{
+				GenerationType: models.Guid,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "guid with ignored length",
-			opts: GenerateOptions{
-				generationType:  guid,
-				length:          45,
-				lengthSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:  models.Guid,
+				Length:          45,
+				LengthSpecified: true,
 			},
 			wantErr: nil,
 		},
 		{
 			name: "invalid charset",
-			opts: GenerateOptions{
-				generationType:   specified,
-				charset:          "",
-				charsetSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:   models.Specified,
+				Charset:          "",
+				CharsetSpecified: true,
 			},
 			wantErr: ErrInvalidCharset,
 		},
 		{
 			name: "invalid charset (unspecified)",
-			opts: GenerateOptions{
-				generationType: specified,
+			opts: models.GenerateOptions{
+				GenerationType: models.Specified,
 			},
 			wantErr: ErrInvalidCharset,
 		},
 		{
 			name: "invalid type",
-			opts: GenerateOptions{
-				generationType: "0",
+			opts: models.GenerateOptions{
+				GenerationType: "0",
 			},
 			wantErr: ErrInvalidType,
 		},
 		{
 			name: "too small length",
-			opts: GenerateOptions{
-				generationType:  alphanumeric,
-				length:          0,
-				lengthSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:  models.Alphanumeric,
+				Length:          0,
+				LengthSpecified: true,
 			},
 			wantErr: ErrInvalidLength,
 		},
 		{
 			name: "too huge length",
-			opts: GenerateOptions{
-				generationType:  alphanumeric,
-				length:          257,
-				lengthSpecified: true,
+			opts: models.GenerateOptions{
+				GenerationType:  models.Alphanumeric,
+				Length:          257,
+				LengthSpecified: true,
 			},
 			wantErr: ErrInvalidLength,
 		},
@@ -151,7 +152,7 @@ func TestGenerator_generateNum(t *testing.T) {
 	for _, tt := range tests {
 		got, err := g.generateNum(tt)
 		assert.Equal(t, nil, err)
-		assert.LessOrEqual(t, len(got), tt)
+		assert.Equal(t, len(got), tt)
 	}
 }
 

@@ -1,6 +1,11 @@
 {
-    "cSpell.ignoreWords": [
-        "mrand",
-        "qwertyuiopasdfghjklzxcvbnm"
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "driver": "SQLite",
+            "name": "a",
+            "group": "a",
+            "database": "${workspaceFolder:GenerateRandomValue}/data/data.db"
+        }
     ]
 }

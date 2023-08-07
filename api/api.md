@@ -79,6 +79,7 @@ GET /api/retrieve/?id={id}
 Ответ будет иметь следующий вид:
 ```json
 {
+    "id": 42,
     "value": "abcd"
 }
 ```

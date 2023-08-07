@@ -9,6 +9,7 @@ import (
 	mrand "math/rand"
 
 	"github.com/google/uuid"
+	"github.com/hablof/generate-random-value/internal/models"
 )
 
 const (
@@ -22,53 +23,15 @@ var (
 	ErrInvalidType    = errors.New("invalid type")
 )
 
-const (
-	stringLike   = "string"
-	num          = "numder"
-	guid         = "guid"
-	alphanumeric = "alphanumeric"
-	specified    = "specified"
-)
-
-type GenerateOptions struct {
-	generationType string
-
-	charset          string
-	charsetSpecified bool
-
-	length          int
-	lengthSpecified bool
-}
-
-func NewGenerateOptions(generationType string) GenerateOptions {
-	return GenerateOptions{
-		generationType:   generationType,
-		charset:          "",
-		charsetSpecified: false,
-		length:           0,
-		lengthSpecified:  false,
-	}
-}
-
-func (g *GenerateOptions) SpecifyCharset(charset string) {
-	g.charset = charset
-	g.charsetSpecified = true
-}
-
-func (g *GenerateOptions) SpecifyLength(length int) {
-	g.length = length
-	g.lengthSpecified = true
-}
-
 // func NewGenerator() Generator {
 
 // }
 type Generator struct{}
 
-func (g *Generator) Generate(opts GenerateOptions) (string, error) {
+func (g *Generator) Generate(opts models.GenerateOptions) (string, error) {
 	length := 1
-	if opts.lengthSpecified {
-		length = opts.length
+	if opts.LengthSpecified {
+		length = opts.Length
 	} else {
 		length = 1 + mrand.Intn(256)
 	}
@@ -77,25 +40,25 @@ func (g *Generator) Generate(opts GenerateOptions) (string, error) {
 		return "", ErrInvalidLength
 	}
 
-	switch opts.generationType {
-	case stringLike:
+	switch opts.GenerationType {
+	case models.StringLike:
 		return g.generateWithCharset(stringCharset, length), nil
 
-	case num:
+	case models.Num:
 		return g.generateNum(length)
 
-	case guid:
+	case models.Guid:
 		return strings.ToUpper(uuid.NewString()), nil
 
-	case alphanumeric:
+	case models.Alphanumeric:
 		return g.generateWithCharset(stringCharset+numberCharset, length), nil
 
-	case specified:
-		if !opts.charsetSpecified || opts.charset == "" {
+	case models.Specified:
+		if !opts.CharsetSpecified || opts.Charset == "" {
 			return "", ErrInvalidCharset
 		}
 
-		reducedCharset := g.reduceToUnique(opts.charset)
+		reducedCharset := g.reduceToUnique(opts.Charset)
 
 		return g.generateWithCharset(reducedCharset, length), nil
 	}
@@ -129,13 +92,16 @@ func (g *Generator) generateWithCharset(charset string, length int) string {
 }
 
 func (g *Generator) generateNum(length int) (string, error) {
-	base := big.NewInt(10)
-	base = base.Exp(base, big.NewInt(int64(length)), nil)
+	min := big.NewInt(10)
+	max := big.NewInt(10)
+	max = max.Exp(max, big.NewInt(int64(length)), nil)
+	min = min.Exp(min, big.NewInt(int64(length-1)), nil)
+	intervalRange := max.Sub(max, min)
 
-	val, err := rand.Int(rand.Reader, base)
+	delta, err := rand.Int(rand.Reader, intervalRange)
 	if err != nil {
 		return "", err
 	}
 
-	return val.String(), nil
+	return delta.Add(min, delta).String(), nil
 }
