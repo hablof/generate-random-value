@@ -3,10 +3,10 @@ package controller
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 
@@ -73,7 +73,7 @@ func (h *Handler) retrieve(c *fiber.Ctx) error {
 
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return h.returnErr(c, fiber.StatusBadRequest, "invalid id")
 	}
 
@@ -83,7 +83,7 @@ func (h *Handler) retrieve(c *fiber.Ctx) error {
 		return h.returnErr(c, fiber.StatusBadRequest, "id not found")
 
 	case err != nil:
-		log.Println(err)
+		log.Error(err)
 		return h.returnErr(c, fiber.StatusInternalServerError, "internal server error")
 	}
 
@@ -109,7 +109,7 @@ func (h *Handler) generate(c *fiber.Ctx) error {
 			break
 
 		case err != nil:
-			log.Println(err)
+			log.Error(err)
 			return h.returnErr(c, fiber.StatusInternalServerError, "internal server error")
 
 		default:
@@ -166,7 +166,7 @@ func (h *Handler) generate(c *fiber.Ctx) error {
 		return h.returnErr(c, fiber.StatusBadRequest, "invalid type")
 
 	case err != nil: // unpredicted err
-		log.Println(err)
+		log.Error(err)
 		return h.returnErr(c, fiber.StatusInternalServerError, "internal server error")
 	}
 
@@ -179,7 +179,7 @@ func (h *Handler) generate(c *fiber.Ctx) error {
 
 	id, err := h.r.Create(unit)
 	if err != nil { // unpredicted err
-		log.Println(err)
+		log.Error(err)
 		return h.returnErr(c, fiber.StatusInternalServerError, "internal server error")
 	}
 

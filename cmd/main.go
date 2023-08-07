@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"github.com/gofiber/fiber/v2/log"
 
 	"github.com/hablof/generate-random-value/internal/controller"
 	"github.com/hablof/generate-random-value/internal/db"
@@ -10,9 +10,11 @@ import (
 )
 
 func main() {
+	log.SetLevel(log.LevelDebug)
+
 	db, err := db.NewDB()
 	if err != nil {
-		log.Println(err)
+		log.Error(err)
 		return
 	}
 

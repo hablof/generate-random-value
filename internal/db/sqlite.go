@@ -3,14 +3,19 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func NewDB() (*sql.DB, error) {
 
-	db, err := sql.Open("sqlite3", fmt.Sprintf("%s?mode=rwc", filepath.Join("data", "data.db")))
+	// f, err := os.OpenFile(filepath.Join("data", "data.db"), os.O_CREATE|os.O_RDWR, 0666)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// f.Close()
+
+	db, err := sql.Open("sqlite3", fmt.Sprintf("%s?mode=rwc" /*filepath.Join("data",*/, "data.db")) //)
 	if err != nil {
 		return nil, err
 	}
